@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
+    "ts:check": "tsc",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
@@ -12,10 +13,14 @@
     "expo": "~50.0.2",
     "expo-status-bar": "~1.11.1",
     "react": "18.2.0",
-    "react-native": "0.73.2"
+    "react-native": "0.73.2",
+    "@types/react": "~18.2.45",
+    "expo-image": "~1.10.5"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
   },
   "private": true
 }
