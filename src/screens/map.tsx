@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { View, Text, Button } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
@@ -51,12 +51,10 @@ function Map({ navigation }) {
 
     return (
         <View style={styles.map_view}>
-            {/* <View style={{marginTop: "15%", flexDirection: "row", alignContent: "flex-start"}}>
-        <Text style={{fontWeight: "bold"}}>Choolse a location and radius</Text>
-        <Button
-              onPress={() => navigation.goBack()}
-        />
-      </View> */}
+            <View style={{ marginTop: "15%", flexDirection: "row", alignContent: "flex-start" }}>
+                <Text style={{ fontWeight: "bold" }}>Choolse a location and radius</Text>
+                <Button title="test" onPress={() => navigation.goBack()} />
+            </View>
             {initialRegion && (
                 <MapView
                     style={styles.map}
@@ -70,7 +68,6 @@ function Map({ navigation }) {
                         minimumTrackTintColor="#FFFFFF"
                         maximumTrackTintColor="#000000"
                     />
-
                     {currentLocation && (
                         <Marker
                             coordinate={{
