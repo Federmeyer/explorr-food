@@ -4,70 +4,45 @@ import { func } from "prop-types";
 const API_KEY = "AIzaSyDXBtYy26NvRwIkZkTAjlYmFwafA9s-DsY";
 
 
-export async function myFunction(lat, long) {
+export async function myFunction(lat: string, long: string) {
     const res = await getPlaces(lat, long);
-    const place = res[0]
-    const photos = place.photos
     const images = await getAllPhotos(res);
     return images;
-    
-    // this is good
 }
 
-export async function placeName(lat:string, long:string) {
-    const BASE = "https://maps.googleapis.com/maps/api/geocode/json?latlng="
-    // const BASE = "https://maps.googleapis.com/maps/api/geocode/json?latlng=41.8663655786681,-87.6457829806161&key=AIzaSyDXBtYy26NvRwIkZkTAjlYmFwafA9s-DsY"
-
-    const fullURL = BASE + lat + "," + long + "&key=" + API_KEY
-    const response = await fetch(fullURL, {})
+export async function placeName(lat: string, long: string) {
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=${API_KEY}`;
+    const response = await fetch(url);
     const res = await response.json();
+
     return res.results[0].formatted_address;
 }
 
-async function getPlaces(lat, long) {
+async function getPlaces(lat: string, long: string) {
+    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${long}&radius=${4000}&key=${API_KEY}`;
+    const response = await fetch(url);
+    const result = await response.json();
 
-    const response = await fetch("https://places.googleapis.com/v1/places:searchNearby", {
-        method: "POST",
-        headers: 
-        {
-            "Content-Type": "application/json",
-            "X-Goog-Api-Key": API_KEY,
-            "X-Goog-FieldMask": "places.photos"
-        }, 
-        body: JSON.stringify({
-            "includedTypes": ["restaurant"],
-            "maxResultCount": 10,
-            "locationRestriction": {
-                "circle": {
-                "center": {
-                    "latitude": lat,
-                    "longitude": long},
-                "radius": 500.0 // meters
-                }
-            }
-        })
-    })
-
-    var result = await response.json();
-    return (result.places);
+    return (result.results);
 }
 
 
-async function getAllPhotos(places) {
+async function getAllPhotos(places: any[]) {
     var images = [];
-     for (var i = 0; i < places.length; i++) {
-        const  photoURL = places[i].photos[0].name;
-        await getPhoto(photoURL).then((test) => {images.push(test)});
+
+    for (var i = 0; i < places.length; i++) {
+        const photoReference = places[i].photos[0].photo_reference;
+        await getPhoto(photoReference).then(url => {images.push(url)});
     }
+
     return images;
 }
 
 
-async function getPhoto(URL) {
-    const BASE = "https://places.googleapis.com/v1/"
+async function getPhoto(photo_reference: string) {
+    const url = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${photo_reference}&key=${API_KEY}`;
+    const response = await fetch(url)
 
-    const fullURL = BASE + URL + "/media?maxHeightPx=400&maxWidthPx=400&key=" + API_KEY
-    const response = await fetch(fullURL, {})
     return (response.url);
 }
 

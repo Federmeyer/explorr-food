@@ -6,10 +6,7 @@ import React, { useState, useEffect } from 'react';
 import MapView, { Marker } from "react-native-maps";
 import * as Location from 'expo-location';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-
-
 import Slider from '@react-native-community/slider';
-
 import Carousel from 'react-native-reanimated-carousel';
 
 
@@ -52,6 +49,9 @@ function Places ({route, navigation }) {
                 color="#841584"
               />
             }
+            <Text>
+              TEST
+            </Text>
             <Carousel
                 style={null}
                 loop
@@ -82,9 +82,6 @@ function Map({ navigation }) {
   const [initialRegion, setInitialRegion] = useState(null);
 
   useEffect(() => {
-
-    
-    
     navigation.setOptions({
       headerShown: true, 
       title: 'Choose a location and distance',
@@ -163,11 +160,12 @@ function Home({ navigation }) {
       }
 
       let location = await Location.getCurrentPositionAsync({});
-      let images:string[] = await myFunction(location.coords.latitude, location.coords.longitude);       
+      let images:string[] = await myFunction(`${location.coords.latitude}`, `${location.coords.longitude}`); 
       navigation.navigate('Places', {
         currentImages: images,
         currentLocation: location
       })
+      
     };
 
     getLocation()
