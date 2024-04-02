@@ -10,7 +10,7 @@ import Slider from '@react-native-community/slider';
 import Carousel from 'react-native-reanimated-carousel';
 
 
-import {myFunction, placeName} from "./places";
+import {getNearbyPhotos, placeName} from "./places";
 
 const HOME_IMAGE = "./assets/test.png";
 
@@ -160,7 +160,7 @@ function Home({ navigation }) {
       }
 
       let location = await Location.getCurrentPositionAsync({});
-      let images:string[] = await myFunction(`${location.coords.latitude}`, `${location.coords.longitude}`); 
+      let images:string[] = await getNearbyPhotos(`${location.coords.latitude}`, `${location.coords.longitude}`); 
       navigation.navigate('Places', {
         currentImages: images,
         currentLocation: location
