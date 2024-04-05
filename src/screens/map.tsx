@@ -1,15 +1,17 @@
-import { View, Text, Button } from 'react-native';
+import { View, Text, Button, Platform, Pressable } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, Circle } from 'react-native-maps';
 import * as Location from 'expo-location';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Slider from '@react-native-community/slider';
 
 import styles from '../utils/styles';
 
-function Map({ navigation }) {
+const Map = ({ navigation }) => {
     const [currentLocation, setCurrentLocation] = useState(null);
     const [initialRegion, setInitialRegion] = useState(null);
+    const [distance, setDistance] = useState(1);
+    const [mapReady, setMapReady] = useState(false);
 
     useEffect(() => {
         navigation.setOptions({
@@ -51,23 +53,50 @@ function Map({ navigation }) {
 
     return (
         <View style={styles.map_view}>
-            <View style={{ marginTop: "15%", flexDirection: "row", alignContent: "flex-start" }}>
-                <Text style={{ fontWeight: "bold" }}>Choolse a location and radius</Text>
-                <Button title="test" onPress={() => navigation.goBack()} />
-            </View>
             {initialRegion && (
                 <MapView
                     style={styles.map}
                     initialRegion={initialRegion}
-                    provider={'google'}
+                    // provider={'google'}
+                    onMapReady={() => {
+                        setTimeout(() => {
+                            setMapReady(true); // initially this state is false
+                        }, 1000);
+                    }}
                 >
-                    <Slider
-                        style={styles.slider}
-                        minimumValue={0}
-                        maximumValue={1}
-                        minimumTrackTintColor="#FFFFFF"
-                        maximumTrackTintColor="#000000"
-                    />
+                    <View style={{ flex: 1 }}>
+                        <Text style={{ textAlign: 'center' }}>
+                            Distance: {distance} Km
+                        </Text>
+                        <Button
+                            title="Go!"
+                            color={'red'}
+                            onPress={() => {
+                                // TODO: aaaaaaaaaaaaaaaa change params
+                                navigation.navigate('Browse', {
+                                    currentImages: [],
+                                    currentLocation: [],
+                                });
+                            }}
+                        />
+                        {/* <Pressable>
+                            <Text style={{ textAlign: 'center', color: "red" }}>
+                                Test
+                            </Text>
+                        </Pressable> */}
+                        <Slider
+                            style={styles.slider}
+                            minimumValue={1000}
+                            maximumValue={5000}
+                            value={distance}
+                            onValueChange={(val) => {
+                                val = Math.floor(val / 1000);
+                                setDistance(val);
+                            }}
+                            minimumTrackTintColor="#FFFFFF"
+                            maximumTrackTintColor="#000000"
+                        />
+                    </View>
                     {currentLocation && (
                         <Marker
                             coordinate={{
@@ -75,13 +104,31 @@ function Map({ navigation }) {
                                 longitude: currentLocation.longitude,
                             }}
                             title="Your Location"
+                            tracksInfoWindowChanges={
+                                Platform.OS === 'ios' ? true : false
+                            }
+                            tracksViewChanges={
+                                Platform.OS === 'ios' ? true : false
+                            }
+                        />
+                    )}
+                    {currentLocation && (
+                        <Circle
+                            key={`circle`}
+                            center={{
+                                latitude: currentLocation.latitude,
+                                longitude: currentLocation.longitude,
+                            }}
+                            radius={distance * 1000}
+                            strokeWidth={1}
+                            strokeColor={'#1a66ff'}
+                            fillColor={'rgba(230,238,255,0.5)'}
                         />
                     )}
                 </MapView>
             )}
         </View>
     );
-}
+};
 
 export default Map;
-

@@ -1,50 +1,52 @@
 import { ActivityIndicator, StyleSheet, View, Text } from 'react-native';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
 
-import { getNearbyPhotos } from '../utils/places';
+import { getNearbyPhotos } from '../utils/api';
+import getLocation from '../utils/location';
 import styles from '../utils/styles';
+import MyCarousel from '../components/mycarousel';
 
 const HOME_IMAGE = '../assets/test.png';
 
-function Home({ navigation }) {
+const Home = ({ route, navigation }) => {
+    let [location, setLocation] = useState(null);
+    let [localPlaces, setLocalPhotos] = useState(null);
+
     useEffect(() => {
-        const getLocation = async () => {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                console.log('Permission to access location was denied');
-                return;
-            }
-
-            let location = await Location.getCurrentPositionAsync({});
-            let images: string[] = await getNearbyPhotos(
-                `${location.coords.latitude}`,
-                `${location.coords.longitude}`
-            );
-            navigation.navigate('Places', {
-                currentImages: images,
-                currentLocation: location,
+        !location &&
+            getLocation().then((l) => {
+                setLocation(l);
+                console.log('Got location!');
             });
-        };
 
-        getLocation();
-    }, []);
+        location &&
+            !localPlaces &&
+            getNearbyPhotos(
+                location.coords.latitude,
+                location.coords.longitude
+            ).then((p) => {
+                setLocalPhotos(p);
+                console.log('Got photos!');
+            });
+    }, [location]);
+
     return (
         <View style={[styles2.container, styles2.horizontal]}>
-            {/* <Text>
-                Loading locations!
-            </Text> */}
-            <View style={[styles2.loading]}>
-                <ActivityIndicator size="large" color="#0000ff" />
-            </View>
+            {!localPlaces && (
+                <View style={[styles2.loading]}>
+                    <ActivityIndicator size="large" color="#0000ff" />
+                </View>
+            )}
+            {localPlaces && <MyCarousel data={localPlaces} />}
         </View>
     );
-}
+};
 
 const styles2 = StyleSheet.create({
     container: {
         alignItems: 'center',
-        flex: 1
+        flex: 1,
     },
     horizontal: {
         flexDirection: 'row',
@@ -58,7 +60,7 @@ const styles2 = StyleSheet.create({
         top: 0,
         bottom: 0,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
 });
 

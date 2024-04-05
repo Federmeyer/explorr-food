@@ -1,16 +1,29 @@
 const API_KEY = 'AIzaSyDXBtYy26NvRwIkZkTAjlYmFwafA9s-DsY';
 
-export async function getNearbyPhotos(lat: string, long: string) {
+const YELP_API_KEY = 'X-JEH4GISaHlj1py4Y1UMdI79cnqCnEXX_LTcv-vwu1TfJJFo9GRsBWZ-e474lnRIxYPLlO5uNEM5Pe0EaetgoeHei5sEnZKMkTWmQ_2mVKXbF0S26frrV9BGOsMZnYx';
+const YELP_CLIENT_ID = 'S-QBtJSwrKqxvMms5Oypew';
+
+const FOURSQUARE_API_KEY = 'fsq3fiWfT2RqRCrxxsOWOWq7DhBmK37vdhxnUFUXmN40Ohc=';
+
+export async function getNearbyPhotos(lat: number, long: number) {
     const res = await getPlaces(lat, long).catch(() => {
         return [];
     });
     const images = await getAllPhotos(res).catch(() => {
         return [];
     });
-    return images;
+    return images.map((image, index) => {
+        let place: Place = {
+            name: res[index].name,
+            place_id: res[index].place_id,
+            photoURL: image,
+        };
+
+        return place;
+    });
 }
 
-export async function placeName(lat: string, long: string) {
+export async function placeName(lat: number, long: number) {
     const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=${API_KEY}`;
     const response = await fetch(url).catch(() => {
         return undefined;
@@ -23,8 +36,12 @@ export async function placeName(lat: string, long: string) {
     return res.results[0].formatted_address;
 }
 
-export async function getPlaces(lat: string, long: string) {
-    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${long}&radius=${1000}&type=restaurant&key=${API_KEY}`;
+export async function getPlaces(
+    lat: number,
+    long: number,
+    radiusMeters: number = 1000
+) {
+    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${long}&radius=${radiusMeters}&type=restaurant&key=${API_KEY}`;
     const response = await fetch(url).catch(() => {
         return undefined;
     });
@@ -58,4 +75,10 @@ export async function getPhoto(photo_reference: string) {
     });
 
     return response.url;
+}
+
+export interface Place {
+    name: string;
+    place_id: string;
+    photoURL: string;
 }

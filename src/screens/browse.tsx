@@ -1,20 +1,15 @@
-import {
-    Dimensions,
-    Button,
-    Text,
-    View,
-} from 'react-native';
+import { Dimensions, Button, Text, View } from 'react-native';
 import React, { useState, useEffect } from 'react';
 
 import styles from '../utils/styles';
 
-import { placeName } from '../utils/places';
+import { placeName } from '../utils/api';
 import MyCarousel from '../components/mycarousel';
 
-function Places({ route, navigation }) {
+const Browse = ({ route, navigation }) => {
     const width = Dimensions.get('window').width;
     const { currentImages, currentLocation } = route.params;
-    const [loactionName, setLoactionName] = useState(null);
+    const [loactionName, setLoactionName] = useState();
 
     useEffect(() => {
         const getLoactionName = async () => {
@@ -37,11 +32,9 @@ function Places({ route, navigation }) {
                 />
             )}
             <Text>TEST</Text>
-            <MyCarousel
-                data={currentImages}
-            />
+            <MyCarousel data={currentImages} />
         </View>
     );
-}
+};
 
-export default Places;
+export default Browse;
