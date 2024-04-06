@@ -7,7 +7,6 @@ import { placeName } from '../utils/api';
 import MyCarousel from '../components/mycarousel';
 
 const Browse = ({ route, navigation }) => {
-    const width = Dimensions.get('window').width;
     const { currentImages, currentLocation } = route.params;
     const [loactionName, setLoactionName] = useState();
 

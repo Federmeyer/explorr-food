@@ -1,4 +1,4 @@
-import { View, Text, Button, Platform, Pressable } from 'react-native';
+import { View, Text, Button, Platform } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import MapView, { Marker, Circle } from 'react-native-maps';
 import * as Location from 'expo-location';
