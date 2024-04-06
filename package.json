@@ -17,6 +17,7 @@
     "@babel/plugin-transform-shorthand-properties": "^7.24.1",
     "@babel/plugin-transform-template-literals": "^7.24.1",
     "@babel/preset-env": "^7.24.3",
+    "@google/generative-ai": "^0.5.0",
     "@react-google-maps/api": "^2.19.2",
     "@react-native-community/slider": "4.4.2",
     "@react-navigation/native": "^6.1.17",

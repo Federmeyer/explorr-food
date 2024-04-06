@@ -5,26 +5,18 @@ import * as SQLite from 'expo-sqlite';
 
 import getLocation from '../utils/location';
 import styles from '../utils/styles';
+import runGeminiFoodQuery from '../utils/gemini';
+import { stat } from 'fs';
 
 const db = SQLite.openDatabase('foodlog');
 
 // https://docs.expo.dev/versions/latest/sdk/sqlite/
 
 const NewEntry = ({ route, navigation }) => {
-    let [myLocation, setLocation] = useState(null);
-
-    useEffect(() => {
-        !myLocation &&
-            getLocation().then((l) => {
-                setLocation(l);
-                console.log('Got location!');
-            });
-    }, [myLocation]);
-
-    let state = {
+    let defaultState = {
         day: "",
-        location: "",
-        description: "",
+        location: "McDonalds",
+        description: "Quarter Pounder with Cheese",
         calories: 0.0,
         carbs: 0.0,
         protein: 0.0,
@@ -32,6 +24,17 @@ const NewEntry = ({ route, navigation }) => {
         time: 0.0,
         duration: 0.0,
     }
+
+    let [myLocation, setLocation] = useState(null);
+    let [state, setState] = useState(defaultState);
+
+    useEffect(() => {
+        !myLocation &&
+            getLocation().then((l) => {
+                setLocation(l);
+                console.log('Got location!');
+            });
+    }, [myLocation, state]);
 
     // This page will have the following
     // - Back button to cancel
@@ -53,11 +56,35 @@ const NewEntry = ({ route, navigation }) => {
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={[styles.centered]}>
                     <Button title='Import From Favorites' />
-                    <TextInput style={[styles.input]} placeholder='Location' onChangeText={(val) => state.location = val} />
-                    <TextInput style={[styles.input]} placeholder='Meal description' onChangeText={(val) => state.description = val} />
+                    <TextInput style={[styles.input]} placeholder='Location' onChangeText={(val) => state.location = val} defaultValue={state.location} />
+                    <TextInput style={[styles.input]} placeholder='Meal description' onChangeText={(val) => state.description = val} defaultValue={state.description} />
 
                     <View style={[styles.horizontal]}>
-                        <Button title='Autofill With Google Gemini AI' />
+                        <Button title='Autofill With Google Gemini AI' onPress={() => {
+                            runGeminiFoodQuery(state.location, state.description)
+                                .then(res => {
+                                    try {
+                                        const autofillData: number[] = JSON.parse(res);
+                                        if (autofillData.length = 4) {
+                                            state.calories = autofillData[0];
+                                            state.carbs = autofillData[1];
+                                            state.protein = autofillData[2];
+                                            state.fat = autofillData[3];
+                                            let temp = state;
+                                            setState(defaultState);
+                                            setState(temp);
+                                            console.debug("Gemini result:", state);
+                                        }
+                                        else {
+                                            throw Error;
+                                        }
+                                    }
+                                    catch {
+                                        console.error(`There was an issue parsing the result!`);
+                                        console.error(`Culprit:\n`, res);
+                                    }
+                                });
+                        }} />
                     </View>
 
                     <View>
@@ -68,7 +95,14 @@ const NewEntry = ({ route, navigation }) => {
                                         <Text style={[styles.miniinputtext]}>
                                             {`${text} (g)`}
                                         </Text>
-                                        <TextInput style={[styles.input, styles.miniinput]} placeholder='0.0' keyboardType='numeric' onChangeText={(val) => state[`${text}`] = parseInt(val)} />
+                                        <TextInput
+                                            style={[styles.input, styles.miniinput]}
+                                            placeholder='0.0'
+                                            keyboardType='numeric'
+                                            onChangeText={(val) => state[`${text}`] = parseInt(val)}
+                                            defaultValue={String(state[text.toLowerCase()])}
+                                            value={String(state[text.toLowerCase()])}
+                                        />
                                     </View>
                                 )
                             })
