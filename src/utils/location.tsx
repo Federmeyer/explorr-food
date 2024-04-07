@@ -1,6 +1,5 @@
 import * as Location from 'expo-location';
 
-
 const getLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {

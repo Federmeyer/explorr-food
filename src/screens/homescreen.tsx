@@ -1,4 +1,11 @@
-import { View, Text, FlatList, ScrollView, Button, StyleSheet } from 'react-native';
+import {
+    View,
+    Text,
+    FlatList,
+    ScrollView,
+    Button,
+    StyleSheet,
+} from 'react-native';
 import React, { useEffect, useState } from 'react';
 
 import * as SQLite from 'expo-sqlite';
@@ -12,7 +19,8 @@ const db = SQLite.openDatabase('foodlog');
 // https://www.npmjs.com/package/react-native-sqlite-storage
 
 const LogHeader = ({ data }) => {
-    // console.log(data);
+    // const [allData, setAllData] = useState([]);
+    const isCumulative = false;
 
     // We need some dummy data on first login :(
     if (data.length == 0) {
@@ -22,33 +30,53 @@ const LogHeader = ({ data }) => {
                 calories: 0,
                 carbs: 0,
                 protein: 0,
-                fat: 0
-            }
-        ]
+                fat: 0,
+            },
+        ];
     }
 
-    const allData = ["calories", "carbs", "protein", "fat"].map((category) => {
-        return {
-            labels: data.map((val) => val["time"]),
-            datasets: [
-                {
-                    data: data.map((val) => val[category]),
-                    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                    strokeWidth: 2,
-                }
-            ],
-            legend: [category],
+    let labels = data.map((val) => parseFloat(val['time']));
+
+    let cumulativeCounter = [0, 0, 0, 0];
+    const temp = ['calories', 'carbs', 'protein', 'fat'].map(
+        (category, categoryIndex) => {
+            return {
+                labels: labels,
+                datasets: [
+                    {
+                        data: data.map((val) => {
+                            if (isCumulative) {
+                                cumulativeCounter[categoryIndex] += parseFloat(
+                                    val[category]
+                                );
+                                return cumulativeCounter[categoryIndex];
+                            } else {
+                                return parseFloat(val[category]);
+                            }
+                        }),
+                        color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                        strokeWidth: 2,
+                    },
+                    // {
+                    //     data: data.map((val) => {
+                    //         return parseFloat(val[category]);
+                    //     }),
+                    //     color: (opacity = 1) => `rgba(50, 80, 200, ${opacity})`,
+                    //     strokeWidth: 2,
+
+                    // }
+                ],
+                legend: [category],
+            };
         }
-    });
+    );
+
+    const allData = temp; // UGH
 
     return (
         <View>
-            <MyCarousel
-                data={allData}
-            />
-            <Text style={styles.seperator}>
-                ────────  My Log  ────────
-            </Text>
+            <MyCarousel data={allData} />
+            <Text style={styles.seperator}>──────── My Log ────────</Text>
         </View>
     );
 };
@@ -59,7 +87,7 @@ const Home = ({ route, navigation }) => {
 
     useEffect(() => {
         const onFocus = navigation.addListener('focus', () => {
-            db.transactionAsync(async tx => {
+            db.transactionAsync(async (tx) => {
                 let result = await tx.executeSqlAsync(`
                 SELECT * FROM logitem;
                 `);
@@ -69,13 +97,15 @@ const Home = ({ route, navigation }) => {
                 let resSorted = result.rows.sort((entry1, entry2) => {
                     // console.log("\n", entry1, "\n");
                     // console.log("\n", entry2, "\n");
-                    return parseFloat(entry1["time"]) - parseFloat(entry2["time"]);
+                    return (
+                        parseFloat(entry1['time']) - parseFloat(entry2['time'])
+                    );
                 });
                 setLogItems(resSorted);
             });
         });
 
-        db.transactionAsync(async tx => {
+        db.transactionAsync(async (tx) => {
             let result = null;
 
             // FOR DEBUG ONLY, THIS WILL WIPE **ALL** TABLE ON RESTART!!!!!
@@ -117,21 +147,29 @@ const Home = ({ route, navigation }) => {
                     scrollEnabled={false}
                     showsHorizontalScrollIndicator={false}
                     renderItem={({ item, index }) => {
-                        return (
-                            <LogItem data={item} />
-                        );
+                        return <LogItem data={item} />;
                     }}
                     ListHeaderComponent={
                         <View>
                             <LogHeader data={logItems} />
-                            <LogItem data={null} style={{ backgroundColor: 'lightblue', borderBottomWidth: 3, borderTopWidth: 3 }} />
+                            <LogItem
+                                data={null}
+                                style={{
+                                    backgroundColor: 'lightblue',
+                                    borderBottomWidth: 3,
+                                    borderTopWidth: 3,
+                                }}
+                            />
                         </View>
                     }
                     ListFooterComponent={
                         <View style={[styles.horizontal]}>
-                            <Button title="New Log Entry" onPress={() => {
-                                navigation.navigate("NewEntry");
-                            }} />
+                            <Button
+                                title="New Log Entry"
+                                onPress={() => {
+                                    navigation.navigate('NewEntry');
+                                }}
+                            />
                         </View>
                     }
                 />

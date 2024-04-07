@@ -7,17 +7,17 @@ import {
     PieChart,
     ProgressChart,
     ContributionGraph,
-    StackedBarChart
-} from "react-native-chart-kit";
+    StackedBarChart,
+} from 'react-native-chart-kit';
 
 import styles from '../utils/styles';
 
-const capitalize = (s) => (s && s[0].toUpperCase() + s.slice(1)) || "";
+const capitalize = (s) => (s && s[0].toUpperCase() + s.slice(1)) || '';
 
 const Graph = ({ data }) => {
     const width = Dimensions.get('window').width;
-    const label = capitalize(String(data["legend"][0]));
-    data["legend"] = [];
+    const label = capitalize(String(data['legend'][0]));
+    data['legend'] = [];
 
     // const tempData = {
     //     labels: ["January", "February", "March", "April", "May", "June"],
@@ -37,9 +37,9 @@ const Graph = ({ data }) => {
     // };
 
     const chartConfig = {
-        backgroundGradientFrom: "#dedede",
+        backgroundGradientFrom: '#dedede',
         backgroundGradientFromOpacity: 1,
-        backgroundGradientTo: "#dddddd",
+        backgroundGradientTo: '#dddddd',
         backgroundGradientToOpacity: 1,
         color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
         // propsForLabels: {
@@ -52,19 +52,17 @@ const Graph = ({ data }) => {
 
     return (
         <View style={[styles.centered]}>
-            <Text style={{fontSize: 25, marginTop: 10}}>
-                {label}
-            </Text>
+            <Text style={{ fontSize: 25, marginTop: 10 }}>{label}</Text>
             <LineChart
                 style={{ borderRadius: 25 }}
                 width={width}
                 height={width * 0.8}
                 data={data}
                 chartConfig={chartConfig}
-                bezier />
+                bezier
+            />
         </View>
     );
 };
-
 
 export default Graph;

@@ -1,7 +1,11 @@
 import { Dimensions, View, Text } from 'react-native';
 import React from 'react';
 import Carousel from 'react-native-reanimated-carousel';
-import { useNavigation, ParamListBase, NavigationProp } from '@react-navigation/native';
+import {
+    useNavigation,
+    ParamListBase,
+    NavigationProp,
+} from '@react-navigation/native';
 
 import styles from '../utils/styles';
 import Graph from './graph';
@@ -35,7 +39,7 @@ const MyCarousel = ({ data }) => {
     //                     time: "12:15",  // 24 hour time. Is there a object for this?
     //                     amount: "15",
     //                     unit: "grams"
-    //                 }    
+    //                 }
     //             ]
     //         },
     //         // ... repeated for each stat (calories, carbs, etc...)
@@ -60,8 +64,6 @@ const MyCarousel = ({ data }) => {
     //     legend: ["Rainy Days", "Test"] // optional
     // };
 
-
-
     // For debug!
     // TODO: If no graph data, have an empty version to throw in for empty graphs!
     // if ((data as any[]).length == 0) {
@@ -84,10 +86,10 @@ const MyCarousel = ({ data }) => {
             renderItem={({ item, index }) => {
                 // console.log(item);
                 return (
-                    <View style={{flex: 1}}>
+                    <View style={{ flex: 1 }}>
                         <Graph data={item} />
                     </View>
-                )
+                );
             }}
         />
     );
