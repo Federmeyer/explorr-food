@@ -4,12 +4,19 @@ import Carousel from 'react-native-reanimated-carousel';
 import { useNavigation, ParamListBase, NavigationProp } from '@react-navigation/native';
 
 import styles from '../utils/styles';
+import Graph from './graph';
 
-interface Props {
-    data: any
-}
+// interface Props {
+//     data: [
+//         stat: string,
+//         entries: [
+//             time: number,
+//             amount: number,
+//         ]
+//     ]
+// }
 
-const MyCarousel: React.FC<Props> = ({ data }) => {
+const MyCarousel = ({ data }) => {
     const width = Dimensions.get('window').width;
     const navigation: NavigationProp<ParamListBase> = useNavigation();
 
@@ -35,18 +42,38 @@ const MyCarousel: React.FC<Props> = ({ data }) => {
     //     ],
     // };
 
+    // data for graph
+    // const tempData = {
+    //     labels: [0, 1, 2, 3, 4, 5],
+    //     datasets: [
+    //         {
+    //             data: [20, 45, 28, 80, 99, 43],
+    //             color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // optional
+    //             strokeWidth: 2 // optional
+    //         },
+    //         {
+    //             data: [25, 4, 21, 70, 20, 4],
+    //             color: (opacity = 1) => `rgba(70, 6, 24, ${opacity})`, // optional
+    //             strokeWidth: 2 // optional
+    //         }
+    //     ],
+    //     legend: ["Rainy Days", "Test"] // optional
+    // };
+
+
+
     // For debug!
     // TODO: If no graph data, have an empty version to throw in for empty graphs!
-    if ((data as any[]).length == 0) {
-        data = [1, 2, 3, 4, 5];
-    }
+    // if ((data as any[]).length == 0) {
+    //     data = [1, 2, 3, 4, 5];
+    // }
 
-    data = (data as any[]).map((item, index) => index);
+    // data = (data as any[]).map((item, index) => index);
 
     return (
         <Carousel
             style={null}
-            loop={true}
+            loop={false}
             width={width}
             height={width}
             autoPlay={false}
@@ -54,13 +81,14 @@ const MyCarousel: React.FC<Props> = ({ data }) => {
             mode="parallax"
             scrollAnimationDuration={1000}
             // onSnapToItem={(index) => console.log('current index:', index)}
-            renderItem={({ item, index }) => (
-                <View style={[styles.carousel_view]}>
-                    <Text>
-                        This will be a graph {`${index}`} ^^
-                    </Text>
-                </View>
-            )}
+            renderItem={({ item, index }) => {
+                // console.log(item);
+                return (
+                    <View style={{flex: 1}}>
+                        <Graph data={item} />
+                    </View>
+                )
+            }}
         />
     );
 };

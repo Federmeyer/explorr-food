@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import React from 'react';
 
 import styles from '../utils/styles';
@@ -15,12 +15,13 @@ interface Props {
         location: any,
         protein: any,
         time: any,
-    }
+    },
+    style?: StyleProp<ViewStyle>
 }
 
-const LogItem: React.FC<Props> = ({ data }) => {
+const LogItem: React.FC<Props> = ({ data, style }) => {
     return (
-        <View style={[styles.horizontal, { borderWidth: 1 }]}>
+        <View style={[styles.horizontal, { borderWidth: 1 }, style]}>
             <View style={[styles.logitem]}>
                 <Text>
                     {(data) ? data.location : `Location`}
