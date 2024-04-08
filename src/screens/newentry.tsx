@@ -22,7 +22,7 @@ const db = SQLite.openDatabase('foodlog');
 // https://docs.expo.dev/versions/latest/sdk/sqlite/
 
 const NewEntry = ({ route, navigation }) => {
-    let defaultState = {
+    const defaultState = {
         day: '',
         location: 'McDonalds',
         description: 'Quarter Pounder with Cheese',
@@ -36,6 +36,7 @@ const NewEntry = ({ route, navigation }) => {
 
     let [myLocation, setLocation] = useState(null);
     let [state, setState] = useState(defaultState);
+    const [dummyState, setDummyState] = useState(0);
 
     useEffect(() => {
         !myLocation &&
@@ -101,6 +102,7 @@ const NewEntry = ({ route, navigation }) => {
                                                 'Gemini result:',
                                                 state
                                             );
+                                            setDummyState(Date.now());
                                         } else {
                                             throw Error;
                                         }

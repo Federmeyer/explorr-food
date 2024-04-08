@@ -1,10 +1,4 @@
-const API_KEY = 'AIzaSyDXBtYy26NvRwIkZkTAjlYmFwafA9s-DsY';
-
-const YELP_API_KEY =
-    'X-JEH4GISaHlj1py4Y1UMdI79cnqCnEXX_LTcv-vwu1TfJJFo9GRsBWZ-e474lnRIxYPLlO5uNEM5Pe0EaetgoeHei5sEnZKMkTWmQ_2mVKXbF0S26frrV9BGOsMZnYx';
-const YELP_CLIENT_ID = 'S-QBtJSwrKqxvMms5Oypew';
-
-const FOURSQUARE_API_KEY = 'fsq3fiWfT2RqRCrxxsOWOWq7DhBmK37vdhxnUFUXmN40Ohc=';
+import keys from '../../keys.json';
 
 export async function getNearbyPhotos(lat: number, long: number) {
     const res = await getPlaces(lat, long).catch(() => {
@@ -25,7 +19,7 @@ export async function getNearbyPhotos(lat: number, long: number) {
 }
 
 export async function placeName(lat: number, long: number) {
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=${API_KEY}`;
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=${keys.google.places}`;
     const response = await fetch(url).catch(() => {
         return undefined;
     });
@@ -42,7 +36,7 @@ export async function getPlaces(
     long: number,
     radiusMeters: number = 1000
 ) {
-    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${long}&radius=${radiusMeters}&type=restaurant&key=${API_KEY}`;
+    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${long}&radius=${radiusMeters}&type=restaurant&key=${keys.google.places}`;
     const response = await fetch(url).catch(() => {
         return undefined;
     });
@@ -70,7 +64,7 @@ export async function getAllPhotos(places) {
 }
 
 export async function getPhoto(photo_reference: string) {
-    const url = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${photo_reference}&key=${API_KEY}`;
+    const url = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${photo_reference}&key=${keys.google.places}`;
     const response = await fetch(url).catch(() => {
         return undefined;
     });

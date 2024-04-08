@@ -4,11 +4,12 @@ import {
     HarmBlockThreshold,
 } from '@google/generative-ai';
 
+import keys from '../../keys.json';
+
 const MODEL_NAME = 'gemini-1.0-pro';
-const GEM_API_KEY = 'AIzaSyDsxsj2Lc1A3iLB8nd0QBKTbV3yeFoiNIk';
 
 async function runGeminiFoodQuery(locaton: string, mealDescription: string) {
-    const genAI = new GoogleGenerativeAI(GEM_API_KEY);
+    const genAI = new GoogleGenerativeAI(keys.google.gemini);
     const model = genAI.getGenerativeModel({ model: MODEL_NAME });
 
     const generationConfig = {
