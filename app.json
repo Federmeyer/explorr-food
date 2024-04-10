@@ -16,7 +16,7 @@
             "supportsTablet": true
         },
         "android": {
-            "package": "com.federmeyer.explorrfodd",
+            "package": "com.federmeyer.explorrfood",
             "adaptiveIcon": {
                 "foregroundImage": "./src/assets/adaptive-icon.png",
                 "backgroundColor": "#ffffff"
